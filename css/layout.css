@@ -54,6 +54,7 @@ body.page-user table {
 }
 
 #ting-search-form #edit-keys-wrapper{
+  position: relative;
   margin: 0 80px 0 0;
 }
 
@@ -134,7 +135,7 @@ body:not(.front) .bottom-menu li:not(.frontpage):not(.mainsite):nth-child(odd) >
 /***************
  * Page content
  ***************/
-.imagecache-mobile-list-image{
+.imagecache-mobile_list_image{
   width: 100%;
   height: auto;
   display: block;
@@ -409,6 +410,11 @@ a.button,
   color: #222;
   font-size: 13px;
   font-family: Arial, sans-serif;
+}
+
+input[type=submit] {
+  width: inherit;
+  padding: 8px 1em 10px;
 }
 
 textarea {

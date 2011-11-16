@@ -117,7 +117,7 @@ function alternator_user_login($form) {
  * Theme function that can be used to remove stuff form the search form. The
  * h2 headline can be disabled on the block for current theme.
  */
-function alternator_ting_search_form(&$form){
+function alternator_ting_search_form($form){
   unset($form['example_text']);
   return drupal_render($form);
 }
