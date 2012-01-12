@@ -50,7 +50,7 @@
 
 ?>
 <div id="node-<?php print $node->nid; ?>" class="node<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?> clear-block">
-<?php print theme('imagecache','mobile_list_image',$node->field_list_image[0]['filepath']); ?>
+  <?php print $mobile_image_rendered; ?>
 
   <?php if ($title): ?>
     <h1 class="articleheader"><?php print $title ?></h1>

@@ -1,26 +1,45 @@
-<?php 
+<?php
 
 /**
  * Implementation of hook_preprocess_node.
  */
 function alternator_preprocess_node(&$vars){
   global $language;
+  $vars['mobile_image_rendered'] = '';
 
-  if(in_array($vars['type'],array('article','event'))){
-  
+  if (in_array($vars['type'], array('article','event'))) {
     unset($vars['links']);
     unset($vars['field_library_ref_rendered']);
     unset($vars['field_list_image_rendered']);
     unset($vars['field_content_images_rendered']);
     unset($vars['field_file_attachments_rendered']);
-    
+
+    // If ding_mobile_images is enabled, use field_mobile_image for
+    // images, else use list_image.
+    $image_field = module_exists('ding_mobile_images') ? $vars['field_mobile_image'] : $vars['field_list_image'];
+    if (!empty($image_field[0]['fid'])) {
+      $vars['mobile_image_rendered'] = theme('imagecache', 'mobile_list_image', $image_field[0]['filepath']);
+    }
+
     $vars['submitted'] = format_date($vars['created'], 'large', 'Europe/Copenhagen', $language->language);
-    
-    if($vars['type'] == 'event'){
+
+    if ($vars['type'] == 'event'){
       $vars['submitted'] = $vars['node']->field_datetime[0]['view'];
       $vars['price'] = $vars['node']->field_entry_price[0]['view'];
-    }    
-    $vars['content'] = $vars['node']->content['body']['#value'];
+    }
+
+    /*
+     * 'Unprint' some node elements and rerender. Not really the right
+     * way to handle this, but legacy code simply grabbed
+     * $node->content['body']['#value'], and redoing it properly would
+     * require updating of too many existing sites.
+     */
+    unset($vars['node']->content['#printed']);
+    unset($vars['node']->content['body']['#printed']);
+    if (isset($vars['node']->content['place2book_infolink'])) {
+      unset($vars['node']->content['place2book_infolink']['#printed']);
+    }
+    $vars['content'] = drupal_render($vars['node']->content);
   }
 }
 
@@ -28,7 +47,7 @@ function alternator_preprocess_node(&$vars){
  * Implementation of hook_preprocess_page.
  */
 function alternator_preprocess_page(&$variables){
-  
+
   if (in_array('page-user-login', $variables['template_files'])) {
     $variables['content'] = '<h1>'.t('Login').'</h1>'.$variables['content'];
   }
@@ -36,10 +55,10 @@ function alternator_preprocess_page(&$variables){
   if (in_array('page-user-status', $variables['template_files'])) {
     $variables['content'] = '<h1>'.t('Min konto').'</h1>'.$variables['content'];
   }
-  
+
   // Render the main navigation menu
   $variables['main_menu'] = theme('links', menu_navigation_links('menu-mobile-menu'), array('class' => 'top-menu mobilemenu clear-block'));
-  
+
   // Get bottom navigation links
   $bottom_menu = menu_navigation_links('menu-mobile-bottom-menu');
 
@@ -50,7 +69,7 @@ function alternator_preprocess_page(&$variables){
     $bottom_menu = array_merge(array('frontpage' => array('href' => '<front>', 'title' => t('Front page'))), $bottom_menu);
   }
   $variables['bottom_menu'] = theme('links', $bottom_menu, array('class' => 'bottom-menu mobilemenu clear-block'));
-  
+
 }
 
 function format_danmarc2($string){
@@ -109,7 +128,7 @@ function alternator_user_login($form) {
   unset($form['name']['#description']);
   unset($form['pass']['#description']);
   $form['pass']['#suffix'] = '<p>'.t('tekst der skal stå efter login').'</p>';
-  
+
   return drupal_render($form);
 }
 
@@ -239,7 +258,7 @@ function alternator_ding_reservation_list_form($form) {
 
   // If avtive reservations is found.
   if (!empty($form['reservations']['#grouped']['active'])) {
-    
+
     $items = array();
     foreach ($form['reservations']['#grouped']['active'] as $reservation) {
       $item = array(
@@ -252,14 +271,14 @@ function alternator_ding_reservation_list_form($form) {
       );
 
       $items[] = $item;
-    }    
+    }
 
     // Theme the items, the theme function is located in ding-mobile module
     if (!empty($items)) {
       $output .= theme('ding_mobile_reservation_item_list', $items, t('Active reservations'), array('class' => 'reservation-list checkbox-list'));
     }
   }
-  
+
   // If output is empty, display text
   if (empty($output)) {
     return '<div class="no-reservations">' . t('No reservations found.') . '</div>';
