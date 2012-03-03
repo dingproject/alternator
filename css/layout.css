@@ -10,17 +10,17 @@ body.page-user table {
 /*****************
  * Header
  *****************/
-.header {
+#page-header {
   min-height: 250px;
   background-image: url('../images/bg-header.png');
 }
 
-.header .top,
-.header .bottom {
+#page-header .top,
+#page-header .bottom {
   position: relative;
 }
 
-.header .login-btn {
+#page-header .login-btn {
   background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ebebeb), to(#fbfbfb));
   position: absolute;
   right: 9.5%;
@@ -37,7 +37,7 @@ body.page-user table {
 /****************
  * Search header
  ****************/
-.block-ting_search{
+.block-ting_search {
   padding: 0;
   position: absolute;
   top: 120px;
