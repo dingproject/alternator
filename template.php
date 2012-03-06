@@ -1,13 +1,17 @@
 <?php
+/**
+ * @file
+ * Template overrides and preprocessors for Alternator theme.
+ */
 
 /**
- * Implementation of hook_preprocess_node.
+ * Implements hook_preprocess_node().
  */
-function alternator_preprocess_node(&$vars){
+function alternator_preprocess_node(&$vars) {
   global $language;
   $vars['mobile_image_rendered'] = '';
 
-  if (in_array($vars['type'], array('article','event'))) {
+  if (in_array($vars['type'], array('article', 'event'))) {
     unset($vars['links']);
     unset($vars['field_library_ref_rendered']);
     unset($vars['field_list_image_rendered']);
@@ -23,7 +27,7 @@ function alternator_preprocess_node(&$vars){
 
     $vars['submitted'] = format_date($vars['created'], 'large', 'Europe/Copenhagen', $language->language);
 
-    if ($vars['type'] == 'event'){
+    if ($vars['type'] == 'event') {
       $vars['submitted'] = $vars['node']->field_datetime[0]['view'];
       $vars['price'] = $vars['node']->field_entry_price[0]['view'];
     }
@@ -44,47 +48,55 @@ function alternator_preprocess_node(&$vars){
 }
 
 /**
- * Implementation of hook_preprocess_page.
+ * Implements hook_preprocess_page().
  */
-function alternator_preprocess_page(&$variables){
-
+function alternator_preprocess_page(&$variables) {
   if (in_array('page-user-login', $variables['template_files'])) {
-    $variables['content'] = '<h1>'.t('Login').'</h1>'.$variables['content'];
+    $variables['content'] = '<h1>' . t('Login') . '</h1>' . $variables['content'];
   }
 
   if (in_array('page-user-status', $variables['template_files'])) {
-    $variables['content'] = '<h1>'.t('Min konto').'</h1>'.$variables['content'];
+    $variables['content'] = '<h1>' . t('Min konto') . '</h1>' . $variables['content'];
   }
 
-  // Render the main navigation menu
+  // Render the main navigation menu.
   $variables['main_menu'] = theme('links', menu_navigation_links('menu-mobile-menu'), array('class' => 'top-menu mobilemenu clear-block'));
 
-  // Get bottom navigation links
+  // Get bottom navigation links.
   $bottom_menu = menu_navigation_links('menu-mobile-bottom-menu');
 
-  // Add link to the desktop version
-  $bottom_menu['mainsite'] = array('href' => variable_get('mobile_tools_desktop_url',''),'title' => t('Go to the library site'));
+  // Add link to the desktop version.
+  $bottom_menu['mainsite'] = array('href' => variable_get('mobile_tools_desktop_url', ''), 'title' => t('Go to the library site'));
 
-  if(!drupal_is_front_page()){
+  if (!drupal_is_front_page()) {
     $bottom_menu = array_merge(array('frontpage' => array('href' => '<front>', 'title' => t('Front page'))), $bottom_menu);
   }
   $variables['bottom_menu'] = theme('links', $bottom_menu, array('class' => 'bottom-menu mobilemenu clear-block'));
 
+  // Add admin class to the body if applicable.
+  if (!empty($variables['admin'])) {
+    $variables['body_classes'] .= ' admin';
+  }
 }
 
-function format_danmarc2($string){
-  $string = str_replace('Indhold:','',$string);
-  $string = str_replace(' ; ','<br/>',$string);
-  $string = str_replace(' / ','<br/>',$string);
+/**
+ * Deprecated formatter for danmarc2 data.
+ *
+ * Remove at earliest convenience.
+ */
+function format_danmarc2($string) {
+  $string = str_replace('Indhold:', '', $string);
+  $string = str_replace(' ; ', '<br/>', $string);
+  $string = str_replace(' / ', '<br/>', $string);
 
   return $string;
 }
 
 /**
- * Implementation of hook_feed_icon.
+ * Implements hook_feed_icon().
  */
 function alternator_feed_icon($url) {
-  if ($image = theme('image', drupal_get_path('theme', 'dynamo').'/images/feed.png', t('RSS feed'), t('RSS feed'))) {
+  if ($image = theme('image', drupal_get_path('theme', 'dynamo') . '/images/feed.png', t('RSS feed'), t('RSS feed'))) {
     // Transform view expose query string in to drupal style arguments -- ?library=1 <-> /1
     if ($pos = strpos($url, '?')) {
       $base = substr($url, 0, $pos);
@@ -98,17 +110,17 @@ function alternator_feed_icon($url) {
       // Extra fix for event arrangementer?library=x, as it wants taks. id/lib. id
       if (isset($_GET['library'])) {
         if (arg(1) == '') {
-          $parm = '/all'.$parm;
+          $parm = '/all' . $parm;
         }
       }
-      $url = $base.$parm;
+      $url = $base . $parm;
     }
-    return '<a href="'. check_url($url) .'" class="feed-icon">'. $image .'<span>'. t('RSS') .'</span></a>';
+    return '<a href="' . check_url($url) . '" class="feed-icon">' .  $image . '<span>' . t('RSS') . '</span></a>';
   }
 }
 
 /**
- * Implementation of hook_theme.
+ * Implements hook_theme().
  */
 function alternator_theme() {
   return array(
@@ -127,7 +139,6 @@ function alternator_theme() {
 function alternator_user_login($form) {
   unset($form['name']['#description']);
   unset($form['pass']['#description']);
-  $form['pass']['#suffix'] = '<p>'.t('tekst der skal stå efter login').'</p>';
 
   return drupal_render($form);
 }
@@ -136,11 +147,14 @@ function alternator_user_login($form) {
  * Theme function that can be used to remove stuff form the search form. The
  * h2 headline can be disabled on the block for current theme.
  */
-function alternator_ting_search_form($form){
+function alternator_ting_search_form(&$form) {
   unset($form['example_text']);
   return drupal_render($form);
 }
 
+/**
+ * Theming the user loan list form.
+ */
 function alternator_ding_library_user_loan_list_form($form) {
   $date_format = variable_get('date_format_date_short', 'Y-m-d');
   $output = '';
@@ -148,7 +162,7 @@ function alternator_ding_library_user_loan_list_form($form) {
   // Load ting client, its used get local object ids.
   module_load_include('client.inc', 'ting');
 
-  // List each due data group in own list
+  // List each due data group in own list.
   foreach ($form['loan_data']['#grouped'] as $date => $group) {
     // Overdue loans get preferential treatment. No checkboxes here.
     if ($date == 'overdue') {
@@ -175,11 +189,11 @@ function alternator_ding_library_user_loan_list_form($form) {
       $item = array(
         'checkbox' => drupal_render($form['loans'][$loan_id]),
         'title' => theme('ding_library_user_list_item', 'loan', $loan),
-        'information' => array (
-            'due_date'  => array(
-                'label' => t('Due date'),
-                'value' => ding_library_user_format_date($loan['due_date'], $date_format),
-            ),
+        'information' => array(
+          'due_date'  => array(
+            'label' => t('Due date'),
+            'value' => ding_library_user_format_date($loan['due_date'], $date_format),
+          ),
         ),
         'attributes' => array('class' => $class),
       );
@@ -198,8 +212,8 @@ function alternator_ding_library_user_loan_list_form($form) {
     return '<div class="no-loans">' . t('No loans found.') . '</div>';
   }
   else {
-    // Add top buttons, wait until now, because there may not be any reaservations
-    // and the above statement will fail.
+    // Add top buttons, wait until now, because there may not be any
+    // reservations and the above statement will fail.
     if ($form['buttons']) {
       $form['top_buttons'] = $form['buttons'];
       // Add suffix to duplicated form button ids to ensure uniqueness.
@@ -240,17 +254,17 @@ function alternator_ding_reservation_list_form($form) {
       $item = array(
         'checkbox' => drupal_render($form['selected'][$reservation['id']]),
         'title' => theme('ding_library_user_list_item', 'reservation', $reservation) . ' (<span class="reservation-number">' . t('Res. no @num', array('@num' => $reservation['id'])) . '</span>)',
-        'information' => array (
-            'queue_number'  => array('label' => t('Pickup number'), 'value' => $reservation['pickup_number']),
-            'pickup_expire_date' => array('label' => t('Pickup by'), 'value' => ding_library_user_format_date($reservation['pickup_expire_date'], $date_format)),
-            'pickup_branch' => array('label' => t('Pickup branch'), 'value' => $reservation['pickup_branch'] ? $reservation['pickup_branch'] : t('Unknown')),
+        'information' => array(
+          'queue_number'  => array('label' => t('Pickup number'), 'value' => $reservation['pickup_number']),
+          'pickup_expire_date' => array('label' => t('Pickup by'), 'value' => ding_library_user_format_date($reservation['pickup_expire_date'], $date_format)),
+          'pickup_branch' => array('label' => t('Pickup branch'), 'value' => $reservation['pickup_branch'] ? $reservation['pickup_branch'] : t('Unknown')),
         ),
       );
 
       $items[] = $item;
     }
 
-    // Theme the items, the theme function is located in ding-mobile module
+    // Theme the items, the theme function is located in ding-mobile module.
     if (!empty($items)) {
       $output .= theme('ding_mobile_reservation_item_list', $items, t('Reservations ready for pickup'), array('class' => 'reservation-list checkbox-list'));
     }
@@ -264,30 +278,31 @@ function alternator_ding_reservation_list_form($form) {
       $item = array(
         'checkbox' => drupal_render($form['selected'][$reservation['id']]),
         'title' => theme('ding_library_user_list_item', 'reservation', $reservation) . ' (<span class="reservation-number">' . t('Res. no @num', array('@num' => $reservation['id'])) . '</span>)',
-        'information' => array (
-            'queue_number'  => array('label' => t('Queue number'), 'value' => $reservation['queue_number']),
-            'pickup_branch' => array('label' => t('Pickup branch'), 'value' => $reservation['pickup_branch'] ? $reservation['pickup_branch'] : t('Unknown')),
+        'information' => array(
+          'queue_number'  => array('label' => t('Queue number'), 'value' => $reservation['queue_number']),
+          'pickup_branch' => array('label' => t('Pickup branch'), 'value' => $reservation['pickup_branch'] ? $reservation['pickup_branch'] : t('Unknown')),
         ),
       );
 
       $items[] = $item;
     }
 
-    // Theme the items, the theme function is located in ding-mobile module
+    // Theme the items, the theme function is located in ding-mobile module.
     if (!empty($items)) {
       $output .= theme('ding_mobile_reservation_item_list', $items, t('Active reservations'), array('class' => 'reservation-list checkbox-list'));
     }
   }
 
-  // If output is empty, display text
+  // If output is empty, display text.
   if (empty($output)) {
     return '<div class="no-reservations">' . t('No reservations found.') . '</div>';
-  } else {
-    // Add top buttons, wait until now, because there may not be any reaservations
-    // and the above statement will fail.
+  }
+  else {
+    // Add top buttons, wait until now, because there may not be any
+    // reservations and the above statement will fail.
     if ($form['buttons']) {
       $form['top_buttons'] = $form['buttons'];
-      // Add suffix to duplicated form button ids to ensure uniqueness
+      // Add suffix to duplicated form button ids to ensure uniqueness.
       foreach (element_children($form['top_buttons']) as $key) {
         if (isset($form['top_buttons'][$key]['#id'])) {
           $form['top_buttons'][$key]['#id'] .= '-top';
@@ -331,7 +346,7 @@ function alternator_ding_debt_list_form($form) {
     $item = array(
       'checkbox' => drupal_render($form['selected'][$data['id']]),
       'title' => $data['display_title'],
-      'information' => array (
+      'information' => array(
         'data'  => array('label' => t('Date'), 'value' => ding_library_user_format_date($data['date'], $date_format)),
         'amount' => array('label' => t('Amount'), 'value' => $data['amount']),
       ),
