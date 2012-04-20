@@ -62,7 +62,7 @@
   <h2 class="title-collapsible">
     <?php print t('More information'); ?>
   </h2>
-  <div class="additional-info collapsible-info">
+  <div class="additional-info collapsible-info graybox-btns">
     <?php print $ting_details; ?>
 
     <?php if (isset($additional_content)):
