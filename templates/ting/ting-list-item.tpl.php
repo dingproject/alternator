@@ -37,7 +37,9 @@
 
           <span class='date'>(<?php print $ting_publication_date; ?>)</span>
 
+          <div>
           <?php if (isset($additional_content)) { print drupal_render($additional_content); } ?>
+          </div>
 
           <div class='language'><?php echo t('Language') . ': ' . $ting_language; ?></div>
 
