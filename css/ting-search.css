@@ -76,12 +76,14 @@
    display: none;
  }
  
- .ting-overview .creator {
+ .ting-overview .creator,
+ .ting-item .creator {
   margin: 1em;
   color:#A1A1A2;
  }
 
- .ting-overview .abstract {
+ .ting-overview .abstract,
+ .ting-item .abstract {
   margin:1em ;
  }
  
