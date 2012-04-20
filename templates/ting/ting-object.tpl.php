@@ -17,14 +17,6 @@
 <div id="ting-item-<?php print $ting_local_id; ?>" class="ting-item ting-item-full">
   <h1><?php print $ting_title; ?></h1>
 
-  <!-- AVAILABILITY -->
-
-  <?php
-    // TODO: This should be refactored into the availability module.
-    if (ting_object_is($object, 'limited_availability')): ?>
-    <div class="ting-status waiting"><?php print t('waiting for data'); ?></div>
-  <?php endif; ?>
-
   <?php if ($image): ?>
   <div class="picture">
     <?php print $image; ?>
