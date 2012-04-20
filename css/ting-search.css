@@ -86,6 +86,15 @@
  .ting-item .abstract {
   margin:1em ;
  }
+
+ .ting-item .series {
+  margin:1em ;
+ }
+
+ .ting-item .series li {
+   list-style-type: none;
+   margin: 0;
+ }
  
 .ting-search-collection-types li {
   list-style: none !important;

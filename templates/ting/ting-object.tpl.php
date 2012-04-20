@@ -38,10 +38,10 @@
     <div class="abstract"><?php print $ting_abstract; ?></div>
 
     <?php if (isset($ting_series_links)): ?>
-      <p class="series">
+      <div class="series">
         <span class="label"><?php print t('Series:')?></span>
-        <?php print theme('item_list', $ting_series_links, NULL, 'span'); ?>
-      </p>
+        <?php print theme('item_list', $ting_series_links); ?>
+      </div>
     <?php endif; ?>
 
     <?php if (isset($additional_main_content)):
