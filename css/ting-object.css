@@ -37,6 +37,11 @@
   margin: 0;
 }
 
+.ting-object-buttons ul li {
+  list-style-type: none;
+  margin: 0;
+}
+
 .ting-object-buttons a {
   display: none;
 }
@@ -77,13 +82,23 @@ div.abstract {
   padding: 1em 1em 1em 0;
 }
 
-#ting-object .additional-info .item-list {
-  padding: 3px 0 1px 100px;
+#ting-object .additional-info ul li {
+  list-style-type: none;
+  margin: 0;
+}
+
+#ting-object .additional-info {
+  padding: 0 0 0 100px;
+}
+
+#ting-object .additional-info .item-list{
+  padding: 3px 0 1px 0;
 }
 
 #ting-object .additional-info .item-list h3 {
   left: 0;
   position: static;
+  margin: 0;
 }
 
 #ting-object .additional-info .item-list ul {
