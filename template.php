@@ -63,7 +63,7 @@ function alternator_preprocess_page(&$variables){
   $bottom_menu = menu_navigation_links('menu-mobile-bottom-menu');
 
   // Add link to the desktop version
-  $bottom_menu['mainsite'] = array('href' => 'mt/desktop/front_panel' ,'title' => t('Go to the library site'));
+  $bottom_menu['mainsite'] = array('href' => 'mt/desktop/goto_front' ,'title' => t('Go to the library site'));
 
   if(!drupal_is_front_page()){
     $bottom_menu = array_merge(array('frontpage' => array('href' => '<front>', 'title' => t('Front page'))), $bottom_menu);
