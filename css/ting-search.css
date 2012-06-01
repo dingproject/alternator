@@ -76,13 +76,24 @@
    display: none;
  }
  
- .ting-overview .creator {
+ .ting-overview .creator,
+ .ting-item .creator {
   margin: 1em;
   color:#A1A1A2;
  }
 
- .ting-overview .abstract {
+ .ting-overview .abstract,
+ .ting-item .abstract {
   margin:1em ;
+ }
+
+ .ting-item .series {
+  margin:1em ;
+ }
+
+ .ting-item .series li {
+   list-style-type: none;
+   margin: 0;
  }
  
 .ting-search-collection-types li {
